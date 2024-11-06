@@ -5,7 +5,7 @@ import schedule
 import time
 
 
-def buscar_dados():
+def enviar_email():
     # Conectar ao banco de dados
     conn = mysql.connector.connect(
         host="127.0.0.1",
@@ -24,26 +24,8 @@ def buscar_dados():
     cursor.close()
     conn.close()
 
-    return registros
-
-
-def criar_corpo_email(registros):
-    corpo_email = "<h2>Indicadores de Sensores</h2>"
-#    for registro in registros:
-#        temperatura, pressao, altitude, umidade, co2, poeira, tempo_registro = registro
-#        corpo_email += f"""
-#        <p>Data: {tempo_registro}</p>
-#        <ul>
-#            <li>Temperatura: {temperatura} °C</li>
-#            <li>Pressão: {pressao} Pa</li>
-#            <li>Altitude: {altitude} m</li>
-#            <li>Umidade: {umidade} %</li>
-#            <li>CO2: {co2} ppm</li>
-#            <li>Poeira: {poeira} µg/m³</li>
-#        </ul>
-#        <hr>
-#        """
-    temperatura, pressao, altitude, umidade, co2, poeira, tempo_registro = registros[0]
+    #Gerar corpo do email
+    temperatura, pressao, altitude, umidade, co2, poeira, tempo_registro = registros[-1]
     corpo_email = f"""
     <p>Data: {tempo_registro}</p>
     <ul>
@@ -56,15 +38,12 @@ def criar_corpo_email(registros):
     </ul>
     <hr>
     """
-    return corpo_email
-
-
-def enviar_email(corpo_email):
+    #Envio do email
     msg = email.message.Message()
     msg['Subject'] = "Indicadores de Sensores"
-    msg['From'] = 'projetosenai.cd24@gmail.com'
-    msg['To'] = 'clodoaldo.batista.s@gmail.com, eliane.bdsantos@gmail.com'
-    password = "cdol xorh tmlf inpz"
+    msg['From'] = 'noreply.ecosystemcall@gmail.com'
+    msg['To'] = 'noreply.ecosystemcall@gmail.com'
+    password = "ugtfjofbzmglyssy"
     msg.add_header('Content-Type', 'text/html')
     msg.set_payload(corpo_email)
     
@@ -77,12 +56,11 @@ def enviar_email(corpo_email):
 
 
 if __name__ == "__main__":
-    registros = buscar_dados()
-    corpo_email = criar_corpo_email(registros)
-    enviar_email(corpo_email)
+    enviar_email()
 
-#schedule.every().day.at("20:56").do()
+schedule.every().day.at("22:08").do(enviar_email)
+schedule.every().day.at("22:10").do(enviar_email)
 
-#while True:
-#    schedule.run_pending()  
-#    time.sleep(1)
+while True:
+    schedule.run_pending()  
+    time.sleep(1)
